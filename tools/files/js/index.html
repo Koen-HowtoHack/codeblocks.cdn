@@ -17,11 +17,8 @@
                 return;
             }
 
-            // Bereken het percentage
-            const percentage = (puntenBehaald / totaalPunten) * 100;
-
-            // Bereken het cijfer
-            const cijfer = (percentage + nTerm) / 10;
+            // Bereken het cijfer volgens de gegeven formule
+            const cijfer = (puntenBehaald / totaalPunten) * 9 + nTerm;
 
             // Toon het resultaat
             document.getElementById('resultaat').innerText = `Je cijfer is: ${cijfer.toFixed(2)}`;
