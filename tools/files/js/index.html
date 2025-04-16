@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cijfer Berekening</title>
+    <script>
+        function berekenCijfer() {
+            // Verkrijg de waarden van de invoervelden
+            const puntenBehaald = parseFloat(document.getElementById('puntenBehaald').value);
+            const totaalPunten = parseFloat(document.getElementById('totaalPunten').value);
+            const nTerm = parseFloat(document.getElementById('nTerm').value);
+
+            // Controleer of de invoer geldig is
+            if (isNaN(puntenBehaald) || isNaN(totaalPunten) || isNaN(nTerm) || totaalPunten <= 0) {
+                alert("Voer geldige waarden in.");
+                return;
+            }
+
+            // Bereken het percentage
+            const percentage = (puntenBehaald / totaalPunten) * 100;
+
+            // Bereken het cijfer
+            const cijfer = (percentage + nTerm) / 10;
+
+            // Toon het resultaat
+            document.getElementById('resultaat').innerText = `Je cijfer is: ${cijfer.toFixed(2)}`;
+        }
+    </script>
+</head>
+<body>
+    <h1>Cijfer Berekening</h1>
+    <label for="puntenBehaald">Aantal punten behaald:</label>
+    <input type="number" id="puntenBehaald" required><br><br>
+
+    <label for="totaalPunten">Totaal aantal punten:</label>
+    <input type="number" id="totaalPunten" required><br><br>
+
+    <label for="nTerm">N-term:</label>
+    <input type="number" id="nTerm" required><br><br>
+
+    <button onclick="berekenCijfer()">Bereken Cijfer</button>
+
+    <h2 id="resultaat"></h2>
+</body>
+</html>
