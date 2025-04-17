@@ -4,95 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cijfer Berekening</title>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Controleer of de disclaimer is geaccepteerd
-            if (!localStorage.getItem('disclaimerGeaccepteerd')) {
-                // Toon de popup
-                document.getElementById('disclaimerPopup').style.display = 'block';
-
-                // Voeg een event listener toe aan de "Accepteren" knop
-                document.getElementById('accepteerDisclaimer').addEventListener('click', function() {
-                    // Sla op dat de disclaimer is geaccepteerd in localStorage
-                    localStorage.setItem('disclaimerGeaccepteerd', 'true');
-                    // Verberg de popup
-                    document.getElementById('disclaimerPopup').style.display = 'none';
-                    // Initialiseer de rest van de pagina (optioneel, als je andere dingen in JS doet)
-                    initPage(); // Zie de noot onderaan
-                });
-            } else {
-                // Als de disclaimer al is geaccepteerd, initialiseer de pagina
-                initPage(); // Zie de noot onderaan
-            }
-
-            function initPage() {
-                // Verkrijg de knoppen en invoervelden
-                const berekenKnop = document.getElementById('berekenKnop');
-                const opslaanKnop = document.getElementById('opslaanKnop');
-                const puntenBehaaldInput = document.getElementById('puntenBehaald');
-                const totaalPuntenInput = document.getElementById('totaalPunten');
-                const nTermInput = document.getElementById('nTerm');
-
-                // Voeg een event listener toe aan de "Bereken Cijfer" knop
-                berekenKnop.addEventListener('click', function() {
-                    berekenCijfer();
-                });
-
-                // Voeg een event listener toe aan de "Opslaan Resultaat" knop
-                opslaanKnop.addEventListener('click', function() {
-                    slaResultaatOp();
-                });
-
-                // Functie om het cijfer te berekenen
-                function berekenCijfer() {
-                    // Verkrijg de waarden van de invoervelden
-                    const puntenBehaald = parseFloat(puntenBehaaldInput.value);
-                    const totaalPunten = parseFloat(totaalPuntenInput.value);
-                    const nTerm = parseFloat(nTermInput.value);
-
-                    // Controleer of de invoer geldig is
-                    if (isNaN(puntenBehaald) || isNaN(totaalPunten) || isNaN(nTerm) || totaalPunten <= 0) {
-                        alert("Voer geldige waarden in.");
-                        return;
-                    }
-
-                    // Bereken het cijfer volgens de gegeven formule
-                    const cijfer = (puntenBehaald / totaalPunten) * 9 + nTerm;
-
-                    // Toon het resultaat
-                    document.getElementById('resultaat').innerText = `Je cijfer is: ${cijfer.toFixed(2)}`;
-                }
-
-                // Functie om het resultaat op te slaan
-                function slaResultaatOp() {
-                    const resultaatTekst = document.getElementById('resultaat').innerText;
-                    if (resultaatTekst) { // Zorg ervoor dat er een resultaat is om op te slaan
-                        let opgeslagenResultaten = JSON.parse(localStorage.getItem('cijferResultaten')) || [];
-                        opgeslagenResultaten.push(resultaatTekst);
-                        localStorage.setItem('cijferResultaten', JSON.stringify(opgeslagenResultaten));
-                        updateOpgeslagenResultatenWeergave();
-                    } else {
-                        alert("Bereken eerst een cijfer voordat je het opslaat.");
-                    }
-                }
-
-                // Functie om de opgeslagen resultaten weer te geven
-                function updateOpgeslagenResultatenWeergave() {
-                    const opgeslagenResultatenDiv = document.getElementById('opgeslagenResultaten');
-                    opgeslagenResultatenDiv.innerHTML = '<h3>Opgeslagen Resultaten:</h3>'; // Clear bestaande resultaten
-                    const opgeslagenResultaten = JSON.parse(localStorage.getItem('cijferResultaten')) || [];
-                    opgeslagenResultaten.forEach(resultaat => {
-                        const p = document.createElement('p');
-                        p.innerText = resultaat;
-                        opgeslagenResultatenDiv.appendChild(p);
-                    });
-                }
-
-                // Toon opgeslagen resultaten bij het laden van de pagina
-                updateOpgeslagenResultatenWeergave();
-            }
-        });
-    </script>
     <style>
         #disclaimerPopup {
             display: none;
@@ -106,7 +17,7 @@
             padding: 20px;
             text-align: center;
             z-index: 10;
-            overflow-y: auto; /* Zorg voor scrollbar als de inhoud te lang is */
+            overflow-y: auto;
         }
         #disclaimerPopup h2 {
             font-size: 1.5em;
@@ -144,16 +55,132 @@
             }
         }
     </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Controleer of de disclaimer is geaccepteerd
+            if (!localStorage.getItem('disclaimerGeaccepteerd')) {
+                // Toon de popup
+                document.getElementById('disclaimerPopup').style.display = 'block';
+
+                // Voeg een event listener toe aan de "Accepteren" knop
+                document.getElementById('accepteerDisclaimer').addEventListener('click', function() {
+                    // Sla op dat de disclaimer is geaccepteerd in localStorage
+                    localStorage.setItem('disclaimerGeaccepteerd', 'true');
+                    // Verberg de popup
+                    document.getElementById('disclaimerPopup').style.display = 'none';
+                    // Initialiseer de rest van de pagina
+                    initPage();
+                });
+            } else {
+                // Als de disclaimer al is geaccepteerd, initialiseer de pagina
+                initPage();
+            }
+
+            function initPage() {
+                // Verkrijg de knoppen en invoervelden
+                const berekenKnop = document.getElementById('berekenKnop');
+                const opslaanKnop = document.getElementById('opslaanKnop');
+                const verwijderOpslagKnop = document.getElementById('verwijderOpslag');
+                const puntenBehaaldInput = document.getElementById('puntenBehaald');
+                const totaalPuntenInput = document.getElementById('totaalPunten');
+                const nTermInput = document.getElementById('nTerm');
+                const naamInput = document.getElementById('naam'); // Dit veld is er, maar wordt nu anders gebruikt
+
+                // Voeg een event listener toe aan de "Bereken Cijfer" knop
+                berekenKnop.addEventListener('click', function() {
+                    berekenCijfer();
+                });
+
+                // Voeg een event listener toe aan de "Opslaan Resultaat" knop
+                opslaanKnop.addEventListener('click', function() {
+                    slaResultaatOp();
+                });
+
+                // Voeg een event listener toe aan de "Verwijder Opgeslagen Resultaten" knop
+                verwijderOpslagKnop.addEventListener('click', function() {
+                    verwijderOpgeslagenResultaten();
+                });
+
+                // Functie om het cijfer te berekenen
+                function berekenCijfer() {
+                    // Verkrijg de waarden van de invoervelden
+                    const puntenBehaald = parseFloat(puntenBehaaldInput.value);
+                    const totaalPunten = parseFloat(totaalPuntenInput.value);
+                    const nTerm = parseFloat(nTermInput.value);
+
+                    // Controleer of de invoer geldig is
+                    if (isNaN(puntenBehaald) || isNaN(totaalPunten) || isNaN(nTerm) || totaalPunten <= 0) {
+                        alert("Voer geldige waarden in.");
+                        return;
+                    }
+
+                    // Bereken het cijfer volgens de gegeven formule
+                    const cijfer = (puntenBehaald / totaalPunten) * 9 + nTerm;
+
+                    // Toon het resultaat
+                    document.getElementById('resultaat').innerText = `Je cijfer is: ${cijfer.toFixed(2)}`;
+                }
+
+                // Functie om het resultaat op te slaan
+                function slaResultaatOp() {
+                    const resultaatTekst = document.getElementById('resultaat').innerText;
+                    //const naam = naamInput.value;  // Deze regel is verwijderd
+                    const datum = new Date().toLocaleDateString();
+
+                    if (resultaatTekst) {
+                        const naam = prompt("Geef een naam aan dit cijfer:"); // Vraag om de naam
+                        if (naam === null || naam.trim() === "") {
+                            alert("Er is geen naam ingevoerd. Het resultaat wordt opgeslagen zonder naam.");
+                        }
+                        let opgeslagenResultaten = JSON.parse(localStorage.getItem('cijferResultaten')) || [];
+                        opgeslagenResultaten.push({
+                            resultaat: resultaatTekst,
+                            naam: naam,
+                            datum: datum
+                        });
+                        localStorage.setItem('cijferResultaten', JSON.stringify(opgeslagenResultaten));
+                        updateOpgeslagenResultatenWeergave();
+                    } else {
+                        alert("Bereken eerst een cijfer voordat je het opslaat.");
+                    }
+                }
+
+                // Functie om de opgeslagen resultaten weer te geven
+                function updateOpgeslagenResultatenWeergave() {
+                    const opgeslagenResultatenDiv = document.getElementById('opgeslagenResultaten');
+                    opgeslagenResultatenDiv.innerHTML = '<h3>Opgeslagen Resultaten:</h3>';
+                    const opgeslagenResultaten = JSON.parse(localStorage.getItem('cijferResultaten')) || [];
+                    opgeslagenResultaten.forEach(item => {
+                        const p = document.createElement('p');
+                        p.innerText = `${item.naam ? item.naam + ' - ' : ''}${item.resultaat} (${item.datum})`;
+                        opgeslagenResultatenDiv.appendChild(p);
+                    });
+                }
+
+                // Functie om de opgeslagen resultaten te verwijderen
+                function verwijderOpgeslagenResultaten() {
+                    localStorage.removeItem('cijferResultaten');
+                    document.getElementById('opgeslagenResultaten').innerHTML = '<h3>Opgeslagen Resultaten:</h3><p>Er zijn geen resultaten opgeslagen.</p>';
+                }
+
+                // Toon opgeslagen resultaten bij het laden van de pagina
+                updateOpgeslagenResultatenWeergave();
+            }
+        });
+    </script>
 </head>
 <body>
     <div id="disclaimerPopup">
         <h2>Disclaimer</h2>
-        <p>Deze applicatie is bedoeld voor educatieve doeleinden. De berekeningen die worden uitgevoerd zijn gebaseerd op de ingevoerde gegevens en de gebruikte formule.  Aan de uitkomst van deze berekening kunnen geen rechten worden ontleend.</p>
+        <p>Deze applicatie is bedoeld voor educatieve doeleinden. De berekeningen die worden uitgevoerd zijn gebaseerd op de ingevoerde gegevens en de gebruikte formule. Aan de uitkomst van deze berekening kunnen geen rechten worden ontleend.</p>
         <p>Door op "Accepteren" te klikken, verklaar je dat je deze voorwaarden begrijpt en ermee akkoord gaat.</p>
         <button id="accepteerDisclaimer">Accepteren</button>
     </div>
 
     <h1>Cijfer Berekening</h1>
+    <label for="naam">Naam (optioneel):</label>
+    <input type="text" id="naam"><br><br>
+
     <label for="puntenBehaald">Aantal punten behaald:</label>
     <input type="number" id="puntenBehaald" required><br><br>
 
@@ -171,5 +198,6 @@
     <div id="opgeslagenResultaten">
         <h3>Opgeslagen Resultaten:</h3>
     </div>
+    <button id="verwijderOpslag">Verwijder Opgeslagen Resultaten</button>
 </body>
 </html>
