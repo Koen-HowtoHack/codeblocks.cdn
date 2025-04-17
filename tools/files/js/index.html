@@ -57,24 +57,19 @@
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Controleer of de disclaimer is geaccepteerd
-            if (!localStorage.getItem('disclaimerGeaccepteerd')) {
-                // Toon de popup
-                document.getElementById('disclaimerPopup').style.display = 'block';
+            // Toon de popup
+            document.getElementById('disclaimerPopup').style.display = 'block';
 
-                // Voeg een event listener toe aan de "Accepteren" knop
-                document.getElementById('accepteerDisclaimer').addEventListener('click', function() {
-                    // Sla op dat de disclaimer is geaccepteerd in localStorage
-                    localStorage.setItem('disclaimerGeaccepteerd', 'true');
-                    // Verberg de popup
-                    document.getElementById('disclaimerPopup').style.display = 'none';
-                    // Initialiseer de rest van de pagina
-                    initPage();
-                });
-            } else {
-                // Als de disclaimer al is geaccepteerd, initialiseer de pagina
+            // Voeg een event listener toe aan de "Accepteren" knop
+            document.getElementById('accepteerDisclaimer').addEventListener('click', function() {
+                // Sla op dat de disclaimer is geaccepteerd in localStorage
+                localStorage.setItem('disclaimerGeaccepteerd', 'true');
+                // Verberg de popup
+                document.getElementById('disclaimerPopup').style.display = 'none';
+                // Initialiseer de rest van de pagina
                 initPage();
-            }
+            });
+
 
             function initPage() {
                 // Verkrijg de knoppen en invoervelden
