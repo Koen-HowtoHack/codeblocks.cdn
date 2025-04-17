@@ -148,93 +148,21 @@
         #verwijderOpslag:hover {
             background-color: #c0392b;
         }
-
-        #taalSelectie {
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        #taalSelectie button {
-            background-color: #3498db;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 0 5px;
-            font-size: 1em;
-            transition: background-color 0.3s ease;
-        }
-
-        #taalSelectie button:hover {
-            background-color: #217dbb;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .taal-nederlands {
-            font-family: 'Arial', sans-serif;
-        }
-
-        .taal-engels {
-            font-family: 'Arial', sans-serif;
-        }
-
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            let huidigeTaal = localStorage.getItem('taal') || 'nl';  // Standaardtaal is Nederlands
-            let disclaimerGeaccepteerd = localStorage.getItem('disclaimerGeaccepteerd') === 'true';
+            // Toon de popup
+            document.getElementById('disclaimerPopup').style.display = 'block';
 
-            // Functie om de juiste taal te tonen
-            function toonTaal(taal) {
-                document.querySelectorAll('.taal-nederlands').forEach(el => el.classList.toggle('hidden', taal !== 'nl'));
-                document.querySelectorAll('.taal-engels').forEach(el => el.classList.toggle('hidden', taal !== 'en'));
-                huidigeTaal = taal;
-                localStorage.setItem('taal', taal); // Sla de gekozen taal op
-            }
-
-            // Taalselectie knoppen
-            document.getElementById('nlButton').addEventListener('click', () => {
-                toonTaal('nl');
-                if (!disclaimerGeaccepteerd) {
-                    toonDisclaimer();
-                }
-            });
-            document.getElementById('enButton').addEventListener('click', () => {
-                toonTaal('en');
-                if (!disclaimerGeaccepteerd) {
-                    toonDisclaimer();
-                }
-            });
-
-            // Functie om de disclaimer weer te geven
-            function toonDisclaimer() {
-                const disclaimerPopup = document.getElementById('disclaimerPopup');
-                disclaimerPopup.style.display = 'block';
-            }
-
-            // Functie om de disclaimer te verbergen
-            function verbergDisclaimer() {
-                const disclaimerPopup = document.getElementById('disclaimerPopup');
-                disclaimerPopup.style.display = 'none';
-                disclaimerGeaccepteerd = true;
+            // Voeg een event listener toe aan de "Accepteren" knop
+            document.getElementById('accepteerDisclaimer').addEventListener('click', function() {
+                // Sla op dat de disclaimer is geaccepteerd in localStorage
                 localStorage.setItem('disclaimerGeaccepteerd', 'true');
-                initPage(); // Roep initPage aan na het verbergen van de disclaimer
-            }
-
-            // Accepteer knop in de disclaimer
-            document.getElementById('accepteerDisclaimer').addEventListener('click', verbergDisclaimer);
-
-            // Toon de juiste taal en eventueel de disclaimer bij het laden van de pagina
-            toonTaal(huidigeTaal);
-            if (!disclaimerGeaccepteerd) {
-                toonDisclaimer();
-            } else {
+                // Verberg de popup
+                document.getElementById('disclaimerPopup').style.display = 'none';
+                // Initialiseer de rest van de pagina
                 initPage();
-            }
+            });
 
 
             function initPage() {
@@ -271,7 +199,7 @@
 
                     // Controleer of de invoer geldig is
                     if (isNaN(puntenBehaald) || isNaN(totaalPunten) || isNaN(nTerm) || totaalPunten <= 0) {
-                        alert(huidigeTaal === 'nl' ? "Voer geldige waarden in." : "Enter valid values.");
+                        alert("Voer geldige waarden in.");
                         return;
                     }
 
@@ -279,18 +207,19 @@
                     const cijfer = (puntenBehaald / totaalPunten) * 9 + nTerm;
 
                     // Toon het resultaat
-                    document.getElementById('resultaat').innerText = (huidigeTaal === 'nl' ? "Je cijfer is: " : "Your grade is: ") + cijfer.toFixed(2);
+                    document.getElementById('resultaat').innerText = `Je cijfer is: ${cijfer.toFixed(2)}`;
                 }
 
                 // Functie om het resultaat op te slaan
                 function slaResultaatOp() {
                     const resultaatTekst = document.getElementById('resultaat').innerText;
+                    //const naam = naamInput.value;  // Deze regel is verwijderd
                     const datum = new Date().toLocaleDateString();
 
                     if (resultaatTekst) {
-                        const naam = prompt(huidigeTaal === 'nl' ? "Geef een naam aan dit cijfer:" : "Enter a name for this grade:");
+                        const naam = prompt("Geef een naam aan dit cijfer:"); // Vraag om de naam
                         if (naam === null || naam.trim() === "") {
-                            alert(huidigeTaal === 'nl' ? "Er is geen naam ingevoerd. Het resultaat wordt opgeslagen zonder naam." : "No name entered. The result will be saved without a name.");
+                            alert("Er is geen naam ingevoerd. Het resultaat wordt opgeslagen zonder naam.");
                         }
                         let opgeslagenResultaten = JSON.parse(localStorage.getItem('cijferResultaten')) || [];
                         opgeslagenResultaten.push({
@@ -301,14 +230,14 @@
                         localStorage.setItem('cijferResultaten', JSON.stringify(opgeslagenResultaten));
                         updateOpgeslagenResultatenWeergave();
                     } else {
-                        alert(huidigeTaal === 'nl' ? "Bereken eerst een cijfer voordat je het opslaat." : "Calculate a grade first before saving.");
+                        alert("Bereken eerst een cijfer voordat je het opslaat.");
                     }
                 }
 
                 // Functie om de opgeslagen resultaten weer te geven
                 function updateOpgeslagenResultatenWeergave() {
                     const opgeslagenResultatenDiv = document.getElementById('opgeslagenResultaten');
-                    opgeslagenResultatenDiv.innerHTML = (huidigeTaal === 'nl' ? '<h3>Opgeslagen Resultaten:</h3>' : '<h3>Saved Results:</h3>');
+                    opgeslagenResultatenDiv.innerHTML = '<h3>Opgeslagen Resultaten:</h3>';
                     const opgeslagenResultaten = JSON.parse(localStorage.getItem('cijferResultaten')) || [];
                     opgeslagenResultaten.forEach(item => {
                         const p = document.createElement('p');
@@ -320,9 +249,7 @@
                 // Functie om de opgeslagen resultaten te verwijderen
                 function verwijderOpgeslagenResultaten() {
                     localStorage.removeItem('cijferResultaten');
-                    document.getElementById('opgeslagenResultaten').innerHTML = huidigeTaal === 'nl'
-                        ? '<h3>Opgeslagen Resultaten:</h3><p>Er zijn geen resultaten opgeslagen.</p>'
-                        : '<h3>Saved Results:</h3><p>No results saved.</p>';
+                    document.getElementById('opgeslagenResultaten').innerHTML = '<h3>Opgeslagen Resultaten:</h3><p>Er zijn geen resultaten opgeslagen.</p>';
                 }
 
                 // Toon opgeslagen resultaten bij het laden van de pagina
@@ -332,56 +259,34 @@
     </script>
 </head>
 <body>
-    <div id="taalSelectie">
-        <button id="nlButton">Nederlands</button>
-        <button id="enButton">English</button>
-    </div>
-
-    <div id="disclaimerPopup" class="taal-nederlands">
+    <div id="disclaimerPopup">
         <h2>Disclaimer</h2>
         <p>Deze applicatie is bedoeld voor educatieve doeleinden. De berekeningen die worden uitgevoerd zijn gebaseerd op de ingevoerde gegevens en de gebruikte formule. Aan de uitkomst van deze berekening kunnen geen rechten worden ontleend.</p>
         <p>Door op "Accepteren" te klikken, verklaar je dat je deze voorwaarden begrijpt en ermee akkoord gaat.</p>
         <button id="accepteerDisclaimer">Accepteren</button>
     </div>
 
-    <div id="disclaimerPopup" class="taal-engels hidden">
-        <h2>Disclaimer</h2>
-        <p>This application is for educational purposes only. The calculations performed are based on the input data and the formula used. No rights can be derived from the outcome of this calculation.</p>
-        <p>By clicking "Accept", you declare that you understand and agree to these conditions.</p>
-        <button id="accepteerDisclaimer">Accept</button>
-    </div>
-
-    <h1 class="taal-nederlands hidden">Cijfer Berekening</h1>
-    <h1 class="taal-engels hidden">Grade Calculation</h1>
-
-    <label for="naam" class="taal-nederlands hidden">Naam (optioneel):</label>
-    <label for="naam" class="taal-engels hidden">Name (optional):</label>
+    <h1>Cijfer Berekening</h1>
+    <label for="naam">Naam (optioneel):</label>
     <input type="text" id="naam"><br><br>
 
-    <label for="puntenBehaald" class="taal-nederlands hidden">Aantal punten behaald:</label>
-    <label for="puntenBehaald" class="taal-engels hidden">Points earned:</label>
+    <label for="puntenBehaald">Aantal punten behaald:</label>
     <input type="number" id="puntenBehaald" required><br><br>
 
-    <label for="totaalPunten" class="taal-nederlands hidden">Totaal aantal punten:</label>
-    <label for="totaalPunten" class="taal-engels hidden">Total points:</label>
+    <label for="totaalPunten">Totaal aantal punten:</label>
     <input type="number" id="totaalPunten" required><br><br>
 
-    <label for="nTerm" class="taal-nederlands hidden">N-term:</label>
-    <label for="nTerm" class="taal-engels hidden">N-term:</label>
+    <label for="nTerm">N-term:</label>
     <input type="number" id="nTerm" required><br><br>
 
-    <button id="berekenKnop" class="taal-nederlands hidden">Bereken Cijfer</button>
-    <button id="berekenKnop" class="taal-engels hidden">Calculate Grade</button><br><br>
+    <button id="berekenKnop">Bereken Cijfer</button><br><br>
 
     <div id="resultaat"></div><br>
 
-    <button id="opslaanKnop" class="taal-nederlands hidden">Opslaan Resultaat</button>
-    <button id="opslaanKnop" class="taal-engels hidden">Save Result</button>
+    <button id="opslaanKnop">Opslaan Resultaat</button>
     <div id="opgeslagenResultaten">
-        <h3 class="taal-nederlands hidden">Opgeslagen Resultaten:</h3>
-        <h3 class="taal-engels hidden">Saved Results:</h3>
+        <h3>Opgeslagen Resultaten:</h3>
     </div>
-    <button id="verwijderOpslag" class="taal-nederlands hidden">Verwijder Opgeslagen Resultaten</button>
-    <button id="verwijderOpslag" class="taal-engels hidden">Delete Saved Results</button>
+    <button id="verwijderOpslag">Verwijder Opgeslagen Resultaten</button>
 </body>
 </html>
